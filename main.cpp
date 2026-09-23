@@ -1,4 +1,4 @@
-// COMSC-210 | Lab 13 | Sarthak Pani
+// COMSC-210 | Lab 13
 #include <iostream>
 #include <fstream>
 #include <iomanip>
@@ -121,27 +121,20 @@ void printStatistics(const Student students[], int count) {
         }
     }
 
-    for (int i = 0; i < count - 1; i++) {
-        int smallest = i;
-        for (int j = i + 1; j < count; j++) {
-            if (byScore[j].score < byScore[smallest].score) {
-                smallest = j;
-            }
+    for (int i = 1; i < count; i++) {
+        Student current = byScore[i];
+        int j = i - 1;
+        while (j >= 0 && byScore[j].score > current.score) {
+            byScore[j + 1] = byScore[j];
+            j--;
         }
-        Student temp = byScore[i];
-        byScore[i] = byScore[smallest];
-        byScore[smallest] = temp;
+        byScore[j + 1] = current;
     }
 
     double mean = total / count;
-    double median = (byScore[(count - 1) / 2].score + byScore[count / 2].score) / 2;
-    long medianID = students[0].id;
-    for (int i = 0; i < count; i++) {
-        if (students[i].score == median) {
-            medianID = students[i].id;
-            break;
-        }
-    }
+    int lowerMiddle = (count - 1) / 2;
+    int upperMiddle = count / 2;
+    double median = (byScore[lowerMiddle].score + byScore[upperMiddle].score) / 2;
 
     double squaredDifference = 0;
     for (int i = 0; i < count; i++) {
@@ -153,6 +146,13 @@ void printStatistics(const Student students[], int count) {
     cout << "Minimum Score: " << minScore << " (Student ID: " << minID << ")" << endl;
     cout << "Maximum Score: " << maxScore << " (Student ID: " << maxID << ")" << endl;
     cout << "Mean Score: " << mean << endl;
-    cout << "Median Score: " << median << " (Student ID: " << medianID << ")" << endl;
+    cout << "Median Score: " << median;
+    if (lowerMiddle == upperMiddle) {
+        cout << " (Student ID: " << byScore[lowerMiddle].id << ")";
+    } else {
+        cout << " (Student IDs: " << byScore[lowerMiddle].id
+             << ", " << byScore[upperMiddle].id << ")";
+    }
+    cout << endl;
     cout << "Standard Deviation: " << sqrt(squaredDifference / count) << endl;
 }
