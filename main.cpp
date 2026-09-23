@@ -25,6 +25,8 @@ int main() {
     }
 
     cout << "Read " << count << " student records" << endl;
+
+    selectionSort(students, count);
     return 0;
 }
 
@@ -53,4 +55,19 @@ int readGrades(Student students[], int maxStudents) {
         return -1;
     }
     return count;
+}
+
+// selectionSort() sorts Student records by ID from low to high
+void selectionSort(Student students[], int count) {
+    for (int i = 0; i < count - 1; i++) {
+        int smallest = i;
+        for (int j = i + 1; j < count; j++) {
+            if (students[j].id < students[smallest].id) {
+                smallest = j;
+            }
+        }
+        Student temp = students[i];
+        students[i] = students[smallest];
+        students[smallest] = temp;
+    }
 }
