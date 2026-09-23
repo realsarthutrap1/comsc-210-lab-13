@@ -27,6 +27,11 @@ int main() {
     cout << "Read " << count << " student records" << endl;
 
     selectionSort(students, count);
+
+    if (!writeGrades(students, count)) {
+        return 1;
+    }
+    cout << "Sorted results written to 210-lab-13-grades-sorted.txt" << endl;
     return 0;
 }
 
@@ -70,4 +75,19 @@ void selectionSort(Student students[], int count) {
         students[i] = students[smallest];
         students[smallest] = temp;
     }
+}
+
+// writeGrades() writes the sorted records in the original file format
+bool writeGrades(const Student students[], int count) {
+    ofstream output("210-lab-13-grades-sorted.txt");
+    if (!output) {
+        cout << "Could not write 210-lab-13-grades-sorted.txt" << endl;
+        return false;
+    }
+
+    for (int i = 0; i < count; i++) {
+        output << students[i].id << " " << fixed << setprecision(1)
+               << students[i].score << endl;
+    }
+    return true;
 }
