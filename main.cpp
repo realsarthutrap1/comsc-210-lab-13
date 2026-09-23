@@ -26,12 +26,19 @@ int main() {
 
     cout << "Read " << count << " student records" << endl;
 
+    Student original[MAX_STUDENTS];
+    for (int i = 0; i < count; i++) {
+        original[i] = students[i];
+    }
+
     selectionSort(students, count);
 
     if (!writeGrades(students, count)) {
         return 1;
     }
     cout << "Sorted results written to 210-lab-13-grades-sorted.txt" << endl;
+
+    printStatistics(original, count);
     return 0;
 }
 
@@ -90,4 +97,62 @@ bool writeGrades(const Student students[], int count) {
                << students[i].score << endl;
     }
     return true;
+}
+
+// printStatistics() prints the score summary from the original records
+void printStatistics(const Student students[], int count) {
+    double minScore = students[0].score;
+    double maxScore = students[0].score;
+    long minID = students[0].id;
+    long maxID = students[0].id;
+    double total = 0;
+
+    Student byScore[MAX_STUDENTS];
+    for (int i = 0; i < count; i++) {
+        byScore[i] = students[i];
+        total += students[i].score;
+        if (students[i].score < minScore) {
+            minScore = students[i].score;
+            minID = students[i].id;
+        }
+        if (students[i].score > maxScore) {
+            maxScore = students[i].score;
+            maxID = students[i].id;
+        }
+    }
+
+    for (int i = 0; i < count - 1; i++) {
+        int smallest = i;
+        for (int j = i + 1; j < count; j++) {
+            if (byScore[j].score < byScore[smallest].score) {
+                smallest = j;
+            }
+        }
+        Student temp = byScore[i];
+        byScore[i] = byScore[smallest];
+        byScore[smallest] = temp;
+    }
+
+    double mean = total / count;
+    double median = (byScore[(count - 1) / 2].score + byScore[count / 2].score) / 2;
+    long medianID = students[0].id;
+    for (int i = 0; i < count; i++) {
+        if (students[i].score == median) {
+            medianID = students[i].id;
+            break;
+        }
+    }
+
+    double squaredDifference = 0;
+    for (int i = 0; i < count; i++) {
+        double difference = students[i].score - mean;
+        squaredDifference += difference * difference;
+    }
+
+    cout << endl << "--- Summary Statistics ---" << endl;
+    cout << "Minimum Score: " << minScore << " (Student ID: " << minID << ")" << endl;
+    cout << "Maximum Score: " << maxScore << " (Student ID: " << maxID << ")" << endl;
+    cout << "Mean Score: " << mean << endl;
+    cout << "Median Score: " << median << " (Student ID: " << medianID << ")" << endl;
+    cout << "Standard Deviation: " << sqrt(squaredDifference / count) << endl;
 }
